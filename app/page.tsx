@@ -7,10 +7,10 @@ export default function Home() {
   return (
     <div
       className="lg:h-screen text-white flex flex-col items-center justify-center 
-    px-2"
+    px-2 my-16"
     >
       <h1 className="text-5xl font-bold mb-20">ChatGPT</h1>
-      <div className="flex flex-col lg:flex-row space-x-2 text-center">
+      <div className="flex flex-col lg:flex-row space-x-2 text-center text-sm">
         <div className="">
           <div className="flex flex-col items-center justify-center mb-5">
             {/* Icon */}
