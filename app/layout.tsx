@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SideBar from "@/components/SideBar";
+import { SessionProvider } from "@/components/SessionProvider";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import Login from "@/components/Login";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,24 +14,32 @@ export const metadata: Metadata = {
   description: "chat-gpt-test ",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  //once someone logged in it will be session in state and it will provided to all pages, once the user logged out, there will be no session state.
+  const session = await getServerSession(authOptions);
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex">
-          {/* Sidebar */}
-          <div className="min-h-screen  bg-[#202123] max-w-sm overflow-y-auto md:min-w-[20rem]">
-            <SideBar />
-          </div>
+        <SessionProvider session={session}>
+          {!session ? (
+            <Login />
+          ) : (
+            <div className="flex">
+              {/* Sidebar */}
+              <div className="min-h-screen  bg-[#202123] max-w-sm overflow-y-auto md:min-w-[20rem]">
+                <SideBar />
+              </div>
 
-          {/* ClientProvider - Notification */}
+              {/* ClientProvider - Notification */}
 
-          <div className="bg-[#343541] flex-1">{children}</div>
-        </div>
+              <div className="bg-[#343541] flex-1">{children}</div>
+            </div>
+          )}
+        </SessionProvider>
       </body>
     </html>
   );
