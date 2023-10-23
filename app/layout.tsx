@@ -21,6 +21,9 @@ export default async function RootLayout({
 }) {
   //once someone logged in it will be session in state and it will provided to all pages, once the user logged out, there will be no session state.
   const session = await getServerSession(authOptions);
+
+  console.log(session);
+
   return (
     <html lang="en">
       <body className={inter.className}>
