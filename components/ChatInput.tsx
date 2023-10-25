@@ -1,8 +1,9 @@
 "use client";
 import { db } from "@/firebase";
-import { serverTimestamp } from "firebase/firestore";
+import { collection, serverTimestamp, addDoc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { GoPaperAirplane } from "react-icons/go";
 
 type Props = {
@@ -12,7 +13,9 @@ function ChatInput({ chatId }: Props) {
   const [prompt, setPrompt] = useState("");
 
   const { data: session } = useSession();
-  console.log(prompt);
+
+  //TODO: useSWR to get model
+  const model = "text-davinci-003";
 
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,20 +40,39 @@ function ChatInput({ chatId }: Props) {
     };
     //save the 'message' object to the firestore
     await addDoc(
-      db,
-      "users",
-      session?.user?.email!,
-      "chats",
-      chatId,
-      "messages"
-    ),
-      message;
+      collection(
+        db,
+        "users",
+        session?.user?.email!,
+        "chats",
+        chatId,
+        "messages"
+      ),
+
+      message
+    );
+
+    //fetch data from firebase and display it
+    //Toast loading notification
+    const notification = toast.loading("ChatGPT is thinking");
+    await fetch("api/askQuestion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: input,
+        chatId,
+        model,
+        session,
+      }),
+    }).then(() => {
+      //Toast notification
+      toast.success("ChatGPT has responded", {
+        id: notification,
+      });
+    });
   };
-
-  //Toast notification
-
-  //fetch data from firebase and display it
-
   return (
     <div className="bg-gray-700/50 text-gray-400 rounded-lg text-sm ">
       <form onSubmit={sendMessage} className="p-5 space-x-5 flex">
