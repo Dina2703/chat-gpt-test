@@ -5,7 +5,7 @@ import { BiTrash } from "react-icons/bi";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { collection } from "firebase/firestore";
+import { collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/firebase";
 
 type Props = {
@@ -31,6 +31,11 @@ function ChatRow({ id }: Props) {
     setActive(pathname.includes(id));
   }, [pathname]);
 
+  const removeChat = async () => {
+    await deleteDoc(doc(db, "users", session?.user?.email!, "chats", id));
+    router.replace("/");
+  };
+
   return (
     <Link
       href={`/chat/${id}`}
@@ -40,7 +45,10 @@ function ChatRow({ id }: Props) {
       <p className="flex-1 hidden md:inline-flex truncate">
         {messages?.docs[messages?.docs.length - 1]?.data().text || "New Chat"}
       </p>
-      <BiTrash className="h-5 w-5 text-gray-700 hover:text-red-700" />
+      <BiTrash
+        onClick={removeChat}
+        className="h-5 w-5 text-gray-700 hover:text-red-700"
+      />
     </Link>
   );
 }
