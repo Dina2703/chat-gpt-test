@@ -25,7 +25,6 @@ function ChatInput({ chatId }: Props) {
 
     const input = prompt.trim();
     setPrompt("");
-    console.log(input);
 
     //create an object 'message'
     const message: Message = {
