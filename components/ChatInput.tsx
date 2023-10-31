@@ -14,9 +14,6 @@ function ChatInput({ chatId }: Props) {
 
   const { data: session } = useSession();
 
-  //TODO: useSWR to get model
-  const model = "gpt-3.5-turbo";
-
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -61,9 +58,8 @@ function ChatInput({ chatId }: Props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: input,
+        prompt: "hello",
         chatId,
-        model,
         session,
       }),
     }).then(() => {
