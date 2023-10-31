@@ -52,13 +52,15 @@ function ChatInput({ chatId }: Props) {
     //fetch data from firebase and display it
     //Toast loading notification
     const notification = toast.loading("ChatGPT is thinking");
-    await fetch("api/askQuestion", {
+    // console.log(prompt);
+
+    await fetch("/api/askQuestion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: "hello",
+        prompt,
         chatId,
         session,
       }),
